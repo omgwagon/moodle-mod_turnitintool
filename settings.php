@@ -109,6 +109,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('turnitin_enablediagnostic', get_string('turnitindiagnostic', 'turnitintool'),
                        get_string('turnitindiagnostic_desc', 'turnitintool'), 0, $options));
 
+    $settings->add(new admin_setting_configselect('turnitin_deletegradewithsubmission', get_string('turnitindeletegrade', 'turnitintool'),
+                       get_string('turnitindeletegrade_desc', 'turnitintool'), 0, $options));
+
     $settings->add(new admin_setting_configtext('turnitin_proxyurl', get_string("proxyurl", "turnitintool"),
                        get_string("proxyurl_desc", "turnitintool"),''));
 
@@ -143,6 +146,10 @@ if ($ADMIN->fulltree) {
 
     if ( isset( $CFG->turnitin_enablepseudo ) AND $CFG->turnitin_enablepseudo ) {
 
+        $forcepseudoselect = new admin_setting_configselect('turnitin_forcepseudo', get_string('forcepseudo', 'turnitintool'),
+                       get_string('forcepseudo_desc', 'turnitintool'), 0, $options);
+        $settings->add($forcepseudoselect);
+
         $CFG->turnitin_pseudofirstname = ( isset( $CFG->turnitin_pseudofirstname ) )
                 ? $CFG->turnitin_pseudofirstname : get_string('defaultcoursestudent');
 
@@ -161,6 +168,7 @@ if ($ADMIN->fulltree) {
 
         $settings->add(new admin_setting_configselect('turnitin_lastnamegen', get_string('pseudolastnamegen', 'turnitintool'),
                         get_string('pseudolastnamegen_desc', 'turnitintool' ), 0, $options));
+
 
         $settings->add(new admin_setting_configtext('turnitin_pseudosalt', get_string('pseudoemailsalt', 'turnitintool'),
                         get_string('pseudoemailsalt_desc', 'turnitintool'), ''));
@@ -235,6 +243,9 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect('turnitin_default_excludequoted', get_string('excludequoted','turnitintool'),
                        '', 0, $ynoptions ));
+
+    $settings->add(new admin_setting_configselect('turnitin_show_reviewupload_option', get_string('showreviewuploadoption','turnitintool'),
+                       get_string('showreviewuploadoptionhelp','turnitintool'), 1, $ynoptions ));
 
 }
 /* ?> */

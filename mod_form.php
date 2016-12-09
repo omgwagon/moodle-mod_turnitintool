@@ -9,7 +9,7 @@ require_once ($CFG->dirroot.'/mod/turnitintool/lib.php');
 
 class mod_turnitintool_mod_form extends moodleform_mod {
 
-    function definition() {
+    public function definition() {
 
         global $CFG, $DB, $COURSE, $USER;
         $mform    =& $this->_form;
@@ -27,10 +27,8 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maxlength','turnitintool',$input), 'maxlength', 40, 'client');
         $mform->addRule('name', get_string('maxlength','turnitintool',$input), 'maxlength', 40, 'server');
 
-        if ($CFG->branch >= 29) {
+        if (is_callable(array($this, 'standard_intro_elements'))) {
             $this->standard_intro_elements(get_string('turnitintoolintro', 'turnitintool'));
-        } elseif (is_callable(array($this,'add_intro_editor'))) {
-            $this->add_intro_editor(true, get_string('turnitintoolintro', 'turnitintool'));
         } else {
             $mform->addElement('htmleditor', 'intro', get_string('turnitintoolintro', 'turnitintool'));
             $mform->setType('intro', PARAM_RAW);
@@ -283,4 +281,21 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $this->add_action_buttons();
 
     }
+
+    public function validation($data, $files) {
+        $errors = array();
+
+        if ($data['excludetype'] == 2) {
+            if ($data['excludevalue'] > 100 || $data['excludevalue'] < 1) {
+                // When excluding small matches by percentage,
+                // expect a number between 1 and 100.
+                $errors['excludevalue'] = get_string('excludevaluepercenterror', 'mod_turnitintool');
+            }
+        }
+
+        return $errors;
+
+    }
 }
+
+/* ?> */

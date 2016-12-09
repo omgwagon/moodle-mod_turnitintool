@@ -54,8 +54,12 @@ if (!is_null($param_sub)) {
         exit();
     }
 
+    $context = context_module::instance($cm->id);
     $fs = get_file_storage();
-    $file = $fs->get_file($cm->id,'mod_turnitintool','submission',$submission->id,'/',$submission->submission_filename);
+    $file = $fs->get_file($context->id,'mod_turnitintool','submission',$submission->id,'/',$submission->submission_filename);
+    if (empty($file)) {
+        $file = $fs->get_file($cm->id,'mod_turnitintool','submission',$submission->id,'/',$submission->submission_filename);
+    }
     send_stored_file($file, 0, 0, true);
 
 } if (!is_null($param_part)) {

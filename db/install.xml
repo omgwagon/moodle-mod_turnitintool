@@ -133,8 +133,8 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
             </KEYS>
             <INDEXES>
-                <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="turnitintoolid"/>
-                <INDEX NAME="turnitintoolid" UNIQUE="false" FIELDS="turnitintoolid" PREVIOUS="userid"/>
+                <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="turnitintoolid-objectid-part"/>
+                <INDEX NAME="turnitintoolid-objectid-part" UNIQUE="false" FIELDS="turnitintoolid, submission_objectid, submission_part" PREVIOUS="userid"/>
             </INDEXES>
         </TABLE>
         <TABLE NAME="turnitintool_comments" COMMENT="Turnitin Tools Submission Comments" PREVIOUS="turnitintool_submissions">

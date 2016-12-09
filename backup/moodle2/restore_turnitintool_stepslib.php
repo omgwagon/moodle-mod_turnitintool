@@ -90,7 +90,6 @@ class restore_turnitintool_activity_structure_step extends restore_activity_stru
             // Turnitin class owner not found so use restoring user as owner
             $data->ownerid = $USER->id;
         }
-
         $tiiowner = new stdClass();
         $tiiowner->userid = $data->ownerid;
         $tiiowner->turnitin_uid = $data->ownertiiuid;
@@ -132,7 +131,8 @@ class restore_turnitintool_activity_structure_step extends restore_activity_stru
         }
 
         $newitemid = $DB->insert_record('turnitintool_submissions', $data);
-        $this->set_mapping('turnitintool_submissions', $oldid, $newitemid);
+        $this->set_mapping('turnitintool_submissions', $oldid, $newitemid, true);
+
     }
 
     protected function process_turnitintool_comments($data) {
@@ -150,6 +150,11 @@ class restore_turnitintool_activity_structure_step extends restore_activity_stru
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('turnitintool_comments', $data);
+    }
+
+    protected function after_execute() {
+        // Add turnitin related files, itemid based on mapping 'turnitintool_submissions'.
+        $this->add_related_files('mod_turnitintool', 'submission', 'turnitintool_submissions');
     }
 
 }

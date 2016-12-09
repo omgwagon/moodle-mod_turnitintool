@@ -322,7 +322,7 @@
         turnitintool_footer();
     } else if ( !is_null($param_do) AND ( $param_do=="commslog" OR $param_do=="activitylog" ) ) {
 
-        $logsdir = $CFG->dataroot . "/temp/turnitintool/logs/";
+        $logsdir = $CFG->tempdir . "/turnitintool/logs/";
         $savefile = $param_do.'_'.$param_filedate.'.log';
 
         if ( !is_null( $param_filedate ) ) {
