@@ -47,7 +47,7 @@
 
     /// Print the header
 
-    turnitintool_header(NULL,$course,$_SERVER["REQUEST_URI"],$strturnitintools, $SITE->fullname, $navigation, '', '', true, '', '');
+    turnitintool_header(NULL,$course,$_SERVER["REQUEST_URI"],$strturnitintools, $SITE->fullname, '', '', '', true, '', '');
 
     //print_header_simple($strturnitintools, '', $navigation, "", "", true, "", navmenu($course));
     echo '<div id="turnitintool_style">';
@@ -55,7 +55,7 @@
 /// Get all the appropriate data
 
     if (! $turnitintools = get_all_instances_in_course("turnitintool", $course)) {
-        notice("There are no ".$strturnitintools, "../../course/view.php?id=$course->id");
+        notice("There are no ".$strturnitintools, $CFG->wwwroot."/course/view.php?id=$course->id");
         die;
     }
 

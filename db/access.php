@@ -49,14 +49,23 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
-    )
+    ),
+
+    'mod/turnitintool:submitonbehalfof' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
+        )
+    ),
+
+    'mod/turnitintool:submitwhenloggedinas' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
+        )
+    ),
 );
-
-// Check for version older than 2.0
-if (!is_callable('upgrade_plugins_modules')) {
-	$mod_turnitintool_capabilities = $capabilities;
-}
-
-
-
-/* ?> */

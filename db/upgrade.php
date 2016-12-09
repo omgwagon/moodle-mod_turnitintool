@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  * @package   turnitintool
  * @copyright 2012 Turnitin

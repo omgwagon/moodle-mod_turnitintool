@@ -6,9 +6,7 @@
 
 require_once(__DIR__."/../../config.php");
 require_once(__DIR__."/lib.php");
-if ($CFG->branch >= 20) {
-    require_once($CFG->libdir."/completionlib.php");
-}
+require_once($CFG->libdir."/completionlib.php");
 require_once($CFG->libdir."/formslib.php");
 require_once($CFG->libdir."/form/text.php");
 require_once($CFG->libdir."/form/datetimeselector.php");
@@ -59,7 +57,7 @@ if ($id) {
     }
 }
 
-require_login($course->id);
+require_login($course->id, true, $cm);
 
 if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
     if (!is_callable(array('page_requirements_manager', 'jquery'))) {
@@ -84,8 +82,12 @@ if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we usin
 }
 turnitintool_activitylog("turnitintool.js Loaded","REQUIRE_JS");
 
+/// Mark as viewed
+$completion=new completion_info($course);
+$completion->set_module_viewed($cm);
+
 $param_jumppage=optional_param('jumppage',null,PARAM_CLEAN);
-$param_userid=optional_param('userid',null,PARAM_CLEAN);
+$param_userid=optional_param('userid',null,PARAM_INT);
 $param_post=optional_param('post',null,PARAM_CLEAN);
 $param_delete=optional_param('delete',null,PARAM_CLEAN);
 $param_update=optional_param('update',null,PARAM_CLEAN);
@@ -117,6 +119,8 @@ foreach ( $_POST as $key => $value ) {
     // If 1.9 use clean_param to clean an array  / if 2.0 use clean_param_array
     if ( is_array( $value ) AND is_callable( 'clean_param_array' ) ) {
         $post[$key] = clean_param_array( $value, PARAM_CLEAN );
+    } else if ($key == 'submissionpart' || $key == 'submissiontype') {
+        $post[$key] = clean_param( $value, PARAM_INT);
     } else {
         $post[$key] = clean_param( $value, PARAM_CLEAN );
     }
@@ -263,12 +267,6 @@ if (!is_null($param_submitted) AND $param_do=='options') {
 
 turnitintool_add_to_log($course->id, "view turnitintool", "view.php?id=$cm->id", "User viewed assignment '$turnitintool->name'", "$cm->id");
 
-// Enable activity completion on page view.
-if (property_exists($CFG, 'branch') && $CFG->branch >= 20) {
-    $completion = new completion_info($course);
-    $completion->set_module_viewed($cm);
-}
-
 /// Print the page header
 $strturnitintools = get_string("modulenameplural", "turnitintool");
 $strturnitintool  = get_string("modulename", "turnitintool");
@@ -292,12 +290,12 @@ turnitintool_header($cm,
         $_SERVER["REQUEST_URI"],
         $turnitintool->name,
         $SITE->fullname,
-        $navigation,
+        '',
         "",
         "",
         true,
         update_module_button($cm->id, $course->id, $strturnitintool),
-        navmenu($course)
+        null
 );
 } else {
 turnitintool_header($cm,
@@ -373,8 +371,12 @@ if ($do=='intro') {
 }
 
 if ($do=='submissions') {
-    if ( !has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id))
-         AND !has_capability('mod/turnitintool:submit', turnitintool_get_context('MODULE', $cm->id))) {
+    $context = context_module::instance($cm->id);
+    $submitgrade = has_capability('mod/turnitintool:grade', $context) || has_capability('mod/turnitintool:submit', $context);
+    $isteacher = has_capability('mod/turnitintool:grade', $context);
+    $submitonbehalf =  has_capability('mod/turnitintool:submitonbehalfof', $context);
+    $submitloggedin = (!\core\session\manager::is_loggedinas() || has_capability('mod/turnitintool:submitwhenloggedinas', $context, $USER->realuser));
+    if (!$submitgrade || ($isteacher && !$submitonbehalf) || (\core\session\manager::is_loggedinas() && !$submitloggedin)) {
         turnitintool_print_error('permissiondeniederror','turnitintool');
         exit();
     } else {
